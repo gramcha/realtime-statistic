@@ -35,7 +35,7 @@ public class RealtimeTransactionStatisticController {
 //			System.out.println("missing data");
 			return false;
 		}
-		return TimeStampHelper.isInLastXSecondsInterval(transactionDto.getTimestamp(), inervalSeconds);
+		return TimeStampHelper.isInTimeInterval(transactionDto.getTimestamp(), TimeStampHelper.getCurrentTimeinMS(), inervalSeconds);
 	}
 
 	@RequestMapping(value = "/transactions", method = RequestMethod.POST)
@@ -48,6 +48,6 @@ public class RealtimeTransactionStatisticController {
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public StatisticsDto getStatistics() {
-		return new StatisticsDto();
+		return transactionStatisticService.getStatisticsForInterval();
 	}
 }
