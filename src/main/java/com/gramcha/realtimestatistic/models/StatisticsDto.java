@@ -12,6 +12,28 @@ public class StatisticsDto {
 	private double max;
 	private long count;
 	
+	/**
+	 * @param sum
+	 * @param avg
+	 * @param min
+	 * @param max
+	 * @param count
+	 */
+	public StatisticsDto() {
+		this.sum = 0;
+		this.avg = 0;
+		this.min = Double.POSITIVE_INFINITY;
+		this.max = Double.NEGATIVE_INFINITY;
+		this.count = 0;
+	}
+	public StatisticsDto(double sum, double avg, double min, double max, long count) {
+		super();
+		this.sum = sum;
+		this.avg = avg;
+		this.min = min;
+		this.max = max;
+		this.count = count;
+	}
 	public void setSum(double sum) {
 		this.sum = sum;
 	}
