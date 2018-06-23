@@ -6,20 +6,25 @@
 package com.gramcha.realtimestatistic.models;
 
 public class TransactionDto {
-    private double amount;
-    private long timestamp;
-	public double getAmount() {
+    private Double amount;
+    private Long timestamp;
+	
+	public Double getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
-	public long getTimestamp() {
+
+	public Long getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(long timestamp) {
+
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

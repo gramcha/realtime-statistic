@@ -30,7 +30,6 @@ public class RealtimeTransactionStatisticControllerTest {
     private MockMvc mockMvc;
 	@Test
 	public void postTransactionforValidCase() throws Exception {
-		
 		StringBuilder json = new StringBuilder();
 		json.append("{");
 		json.append("\"amount\": 5.0");
@@ -44,8 +43,66 @@ public class RealtimeTransactionStatisticControllerTest {
 		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
 		.andExpect(status().isCreated())
 		.andExpect(content().bytes(new byte[0]));
-		 
-         
+	}
+	@Test
+	public void postTransactionforInValidCaseMissingTimestamp() throws Exception {
+		StringBuilder json = new StringBuilder();
+		json.append("{");
+		json.append("\"amount\": 5.0");
+		json.append("}");
+		
+		 this.mockMvc.perform(post("/transactions")
+		.contentType("application/json;charset=UTF-8")
+		.content(json.toString())
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isNoContent())
+		.andExpect(content().bytes(new byte[0]));
+	}
+	@Test
+	public void postTransactionforInValidCaseMissingAmount() throws Exception {
+		StringBuilder json = new StringBuilder();
+		json.append("{");
+		json.append("\"timestamp\": " + String.valueOf(TimeStampHelper.getCurrentTimeinMS()));
+		json.append("}");
+		
+		 this.mockMvc.perform(post("/transactions")
+		.contentType("application/json;charset=UTF-8")
+		.content(json.toString())
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isNoContent())
+		.andExpect(content().bytes(new byte[0]));
+	}
+	@Test
+	public void postTransactionforInValidCaseOldTimeStamp() throws Exception {
+		StringBuilder json = new StringBuilder();
+		json.append("{");
+		json.append("\"amount\": 5.0");
+		json.append(",");
+		json.append("\"timestamp\": " + "1529752570367");//1529752570367 some old timestamp
+		json.append("}");
+		
+		 this.mockMvc.perform(post("/transactions")
+		.contentType("application/json;charset=UTF-8")
+		.content(json.toString())
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isNoContent())
+		.andExpect(content().bytes(new byte[0]));
+	}
+	@Test
+	public void postTransactionforInValidCaseFutureTimeStamp() throws Exception {
+		long currentPlus40Secs = TimeStampHelper.getCurrentTimeinMS()+40000L;
+		StringBuilder json = new StringBuilder();
+		json.append("{");
+		json.append("\"amount\": 5.0");
+		json.append(",");
+		json.append("\"timestamp\": " + String.valueOf(currentPlus40Secs));
+		json.append("}");
+		 this.mockMvc.perform(post("/transactions")
+		.contentType("application/json;charset=UTF-8")
+		.content(json.toString())
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isNoContent())
+		.andExpect(content().bytes(new byte[0]));
 	}
 	@Test
 	public void getStatistics() throws Exception {
