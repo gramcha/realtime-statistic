@@ -9,33 +9,45 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.BinaryOperator;
 
+import javax.annotation.PostConstruct;
+
 import org.assertj.core.util.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.gramcha.realtimestatistic.config.AppllicationProperties;
 import com.gramcha.realtimestatistic.Utilities.TimeStampHelper;
 import com.gramcha.realtimestatistic.models.StatisticsDto;
 
 @Service
 public class CircularStatisticsLotBuffer implements StatisticsLotBuffer {
 
-	private final int lotSize = 60;// intervel seconds //TODO: move to application.properties file
+	@Autowired
+	AppllicationProperties props;
+	
+//	private final int ((int)props.getTimeInterval()) = 60;// intervel seconds //TODO: move to application.properties file
 
-	private StatisticsLot[] createLotBuffers() {
-		StatisticsLot[] lotBuffers = new StatisticsLot[lotSize];
-		Arrays.fill(lotBuffers, new StatisticsLotImpl());
-		return lotBuffers;
-	}
+	StatisticsLot[] lotBuffers = null;
 
-	StatisticsLot[] lotBuffers = createLotBuffers();
-
-	private AtomicReferenceArray<StatisticsLot> lots = new AtomicReferenceArray<>(lotBuffers);;
+	private AtomicReferenceArray<StatisticsLot> lots = null;
 	@Autowired
 	StatisticsAggregator aggregator;
 
+	@PostConstruct
+	void init() {
+		lotBuffers = createLotBuffers();
+		lots = new AtomicReferenceArray<>(lotBuffers);;
+	}
+	private StatisticsLot[] createLotBuffers() {
+		System.out.println("");
+		StatisticsLot[] lotBuffers = new StatisticsLot[(int)props.getTimeInterval()];
+		Arrays.fill(lotBuffers, new StatisticsLotImpl());
+		return lotBuffers;
+	}
+	
+	
 	private int getLotIdForGivenTimestamp(long timeStamp) {
 		long timestampInSeconds = TimeStampHelper.getSecondsFromMilliSeconds(timeStamp);
-		return (int) timestampInSeconds % lotSize;
+		return (int) timestampInSeconds % ((int)props.getTimeInterval());
 	}
 
 	private StatisticsLot getDefaultStatistics() {
@@ -61,11 +73,11 @@ public class CircularStatisticsLotBuffer implements StatisticsLotBuffer {
 	@VisibleForTesting
 	StatisticsLot lotReplacement(long timeStamp, StatisticsLot lot1, StatisticsLot lot2) {
 		if (lot1.getTimeStamp() == 0
-				|| false == TimeStampHelper.isInTimeInterval(lot1.getTimeStamp(), timeStamp, lotSize)) {
+				|| false == TimeStampHelper.isInTimeInterval(lot1.getTimeStamp(), timeStamp, ((int)props.getTimeInterval()))) {
 			System.out.println("lot1.getTimeStamp() = "+lot1.getTimeStamp());
 			System.out.println("@accumulator timeStamp ="+timeStamp);
 			// lot1 actualy default one or lot1 timestamp is older than 60 secs
-			if (TimeStampHelper.isInTimeInterval(lot2.getTimeStamp(),timeStamp, lotSize)) {
+			if (TimeStampHelper.isInTimeInterval(lot2.getTimeStamp(),timeStamp, ((int)props.getTimeInterval()))) {
 				System.out.println("lot2 check = "+ "true");
 				return lot2;
 			} else {
@@ -73,7 +85,7 @@ public class CircularStatisticsLotBuffer implements StatisticsLotBuffer {
 			}
 		}
 		System.out.println("3");
-		if (false == TimeStampHelper.isInTimeInterval(lot2.getTimeStamp(), timeStamp, lotSize)) {
+		if (false == TimeStampHelper.isInTimeInterval(lot2.getTimeStamp(), timeStamp, ((int)props.getTimeInterval()))) {
 			return lot1;
 		}
 		System.out.println("4");
@@ -106,7 +118,7 @@ public class CircularStatisticsLotBuffer implements StatisticsLotBuffer {
 	@Override
 	public StatisticsLot add(double amount, Long timeStamp) {
 		System.out.println("1");
-		if(false == TimeStampHelper.isInTimeInterval(timeStamp, TimeStampHelper.getCurrentTimeinMS(), lotSize) ) {
+		if(false == TimeStampHelper.isInTimeInterval(timeStamp, TimeStampHelper.getCurrentTimeinMS(), ((int)props.getTimeInterval())) ) {
 			return getDefaultStatistics();
 		}
 		System.out.println("11");
@@ -140,7 +152,7 @@ public class CircularStatisticsLotBuffer implements StatisticsLotBuffer {
 	@Override
 	public int size() {
 		// TODO Auto-generated method stub
-		return lotSize;// equal to this.lots.length();
+		return ((int)props.getTimeInterval());// equal to this.lots.length();
 	}
 
 	@VisibleForTesting 

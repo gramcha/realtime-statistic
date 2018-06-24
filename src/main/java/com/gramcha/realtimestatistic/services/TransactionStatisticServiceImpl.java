@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gramcha.realtimestatistic.Utilities.TimeStampHelper;
+import com.gramcha.realtimestatistic.config.AppllicationProperties;
 import com.gramcha.realtimestatistic.models.StatisticsDto;
 
 @Service
 public class TransactionStatisticServiceImpl implements TransactionStatisticService {
 
+	@Autowired
+	AppllicationProperties props;
+	
 	@Autowired
 	private CircularStatisticsLotBuffer lotBuffer;
 	@Autowired
@@ -46,7 +50,7 @@ public class TransactionStatisticServiceImpl implements TransactionStatisticServ
 		long currentTimeStamp = TimeStampHelper.getCurrentTimeinMS();
 		for (int i = 0; i < lotBuffer.size(); i++) {
 			StatisticsLot lot = lotBuffer.get(i);
-			if(TimeStampHelper.isInTimeInterval(lot.getTimeStamp(), currentTimeStamp, 60)) {//move 60 seconds to prop file.
+			if(TimeStampHelper.isInTimeInterval(lot.getTimeStamp(), currentTimeStamp, props.getTimeInterval())) {//move 60 seconds to prop file.
 				result = aggregator.aggregateTwoLots(result, lot.getStatistics());
 			}
 		}
