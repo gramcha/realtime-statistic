@@ -37,7 +37,7 @@ To deploy the docker image execute below command
 It will deploy docker container and expose the application localhost 8080
 
 ### Jenkins Pipeline
-To build this application at Jenkins, we have added the **Jenkinsfile** added. Create new Jenkins job with this github repo. Jenkins will find the pipeline file and run the following pipeline.
+To build this application at Jenkins, we have added the **Jenkinsfile**. Create new Jenkins job with this github repo. Jenkins will find the pipeline **Jenkinsfile** and run the following pipeline.
 
 **Clone repository** --> **Prerequisite** --> **Build** --> **Test** --> **Publish to Dockerhub**
 
@@ -63,6 +63,7 @@ We can store the list of transactions in expiring cache. We will make the statis
 #### Advantages of this approch are
 - Easy to implement expiring cache or we can use the existing solutions like Guava CacheBuilder or ExpiryMap libs.
 - Maintenance free approach on expiring cache and thread safety
+
 #### Disadvantages of this approch are
         - GET call response time will vary based on the transaction in cache
         - Each GET call will result in different response time
@@ -94,9 +95,11 @@ Basically, this distributes the load similar to the circular buffer method. We c
     - total number of storage lot - > N = 60
     - convert the timestamp from ms to secs ->  TimestampSecs = TimestampMs / 1000
     - storageLotId = TimestampSecs % N
+
 #### Advantages of this approch are
         - It provides constant time and space complexity.
-        - GET /statistics will be fast compared to the approach one. It is just going to aggregate 60 lots of statistic result.
+        - GET /statistics will be fast compared to the approach one.
+        - It is just going to aggregate 60 lot buffers and generates statistic result.
         - It is thread safe since we are using AtomicReferenceArray to maintain the lot buffer references.
         
 
