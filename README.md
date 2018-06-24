@@ -61,8 +61,8 @@ For the rest api, the biggest and maybe hardest requirement is to make the GET /
 We can store the list of transactions in expiring cache. We will make the statistics calculation whenever we get the /statistics GET request from a user.
 
 #### Advantages of this approach are
-- Easy to implement expiring cache or we can use the existing solutions like Guava CacheBuilder or ExpiryMap libs.
-- Maintenance free approach on expiring cache and thread safety
+		- Easy to implement expiring cache or we can use the existing solutions like Guava CacheBuilder or ExpiryMap libs.
+		- Maintenance free approach on expiring cache and thread safety
 
 #### Disadvantages of this approach are
         - GET call response time will vary based on the transaction in cache
@@ -83,9 +83,9 @@ Recently I have got a chance to build the distributed cache algorithm for Redis 
 Basically, this distributes the load similar to the circular buffer method. We can use the same approach here to distribute the statistics of a different seconds of time interval. For that 
 
 - We need to calculate the statistics whenever a transaction request comes.
-- Store the result in second based lot buffer. Aggregate the result of a lot if that is already having some statistics.
-- Ignore the existing statistics of specific lot if that its timestamp expired.
-- We need to have **N** no of storage lots. The **N** represents the time interval and in our case it is 60 seconds.
+- Store the result in second based lot buffer. Aggregate the result of a lot if that lot is already having some statistics.
+- Ignore the existing statistics of a specific lot if the timestamp of that lot is expired.
+- We need to have **N** number of storage lots. The **N** represents the time interval and in our case it is 60 seconds.
 - Convert the transaction timestamp from *milliseconds to seconds*
 - Perform mod (%) operation on *timestamp seconds* with configured time interval seconds. For Example, 60 seconds
 - Decide the storage lot based on the mod (%) operation result.
