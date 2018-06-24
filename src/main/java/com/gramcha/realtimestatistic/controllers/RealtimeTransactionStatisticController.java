@@ -32,16 +32,19 @@ public class RealtimeTransactionStatisticController {
 
 	private boolean isValidTransactionRequest(TransactionDto transactionDto) {
 		if (transactionDto == null || transactionDto.getAmount() == null || transactionDto.getTimestamp() == null) {
-//			System.out.println("missing data");
+			// System.out.println("missing data");
 			return false;
 		}
-		return TimeStampHelper.isInTimeInterval(transactionDto.getTimestamp(), TimeStampHelper.getCurrentTimeinMS(), inervalSeconds);
+		return TimeStampHelper.isInTimeInterval(transactionDto.getTimestamp(), TimeStampHelper.getCurrentTimeinMS(),
+				inervalSeconds);
 	}
 
 	@RequestMapping(value = "/transactions", method = RequestMethod.POST)
 	public ResponseEntity<?> createTransaction(@RequestBody TransactionDto transactionDto) {
-		if(!isValidTransactionRequest(transactionDto))
+		if (!isValidTransactionRequest(transactionDto)) {
+//			System.out.println("sending 204");
 			return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT);
+		}
 		transactionStatisticService.addTransaction(transactionDto.getAmount(), transactionDto.getTimestamp());
 		return new ResponseEntity<HttpStatus>(HttpStatus.CREATED);
 	}

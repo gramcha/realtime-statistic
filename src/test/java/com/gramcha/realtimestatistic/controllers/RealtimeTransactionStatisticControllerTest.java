@@ -7,7 +7,6 @@ package com.gramcha.realtimestatistic.controllers;
 
 import java.time.LocalDateTime;
 
-import org.assertj.core.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
