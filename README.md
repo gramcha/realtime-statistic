@@ -54,17 +54,17 @@ Returns
 - min    is  a  double  specifying  single  lowest  transaction  value  in  the  last  60  seconds
 - count    is  a  long  specifying  the  total  number  of  transactions  happened  in  the  last  60 seconds
 
-For  the  rest  api,  the  biggest  and  maybe  hardest  requirement  is  to  make  the    GET   /statistics execute   in   **constant   time   and   space**.   The   best   solution   would   be   **O(1)**. 
+For the rest api, the biggest and maybe hardest requirement is to make the GET /statistics execute in **constant time and space**. The best solution would be **O (1)**. 
 
-## Approachs/Possible Solutions
+## Approaches/Possible Solutions
 ### Solution 1 
 We can store the list of transactions in expiring cache. We will make the statistics calculation whenever we get the /statistics GET request from a user.
 
-#### Advantages of this approch are
+#### Advantages of this approach are
 - Easy to implement expiring cache or we can use the existing solutions like Guava CacheBuilder or ExpiryMap libs.
 - Maintenance free approach on expiring cache and thread safety
 
-#### Disadvantages of this approch are
+#### Disadvantages of this approach are
         - GET call response time will vary based on the transaction in cache
         - Each GET call will result in different response time
         - It will not satisfy the constant time requirement.
@@ -96,7 +96,7 @@ Basically, this distributes the load similar to the circular buffer method. We c
     - convert the timestamp from ms to secs ->  TimestampSecs = TimestampMs / 1000
     - storageLotId = TimestampSecs % N
 
-#### Advantages of this approch are
+#### Advantages of this approach are
         - It provides constant time and space complexity.
         - GET /statistics will be fast compared to the approach one.
         - It is just going to aggregate 60 lot buffers and generates statistic result.
@@ -104,3 +104,4 @@ Basically, this distributes the load similar to the circular buffer method. We c
         
 
 This application is implemented using **solution 2**.
+
