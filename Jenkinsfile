@@ -19,7 +19,7 @@ node {
         }
         app = docker.build("realtime-statistic")
     }
-    stage('Test image') {
+    stage('Test') {
 			mavendocker.inside {
 				sh 'mvn test'
 			}
