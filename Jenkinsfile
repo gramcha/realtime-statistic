@@ -24,8 +24,12 @@ node {
 				sh 'mvn test'
 			}
 			junit 'target/surefire-reports/*.xml'
-	        app.inside {
-	            sh 'echo "Tests passed"'
-	        }
     }
+    stage('Publish to Dockerhub'){
+    		docker.withRegistry('https://registry.hub.docker.com', 'Dockerhub') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+        }                   
+ 	}
+
 }
